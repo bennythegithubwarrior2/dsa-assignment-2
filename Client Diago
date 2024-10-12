@@ -22,17 +22,19 @@ public function main() returns error? {
 
 ---------------------------------------VERSION 2---------------------------------------------------
 
+import ballerina/http;
 import ballerina/io;
-
+import ballerina/log;
 
 public function main() returns error? {
+    http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
     json[] reports = [];
     boolean continueInput = true;
+    json requestPayload = check getUserInput();
 
     while (continueInput) {
-        json requestPayload = check getUserInput();
+        
         reports.push(requestPayload);
-
         io:println("Do you want to enter another request? (yes/no): ");
         string userResponse = io:readln();
         if (userResponse.toLowerAscii() != "yes") {
@@ -40,7 +42,11 @@ public function main() returns error? {
         }
     }
 
+    http:Response response = check clientEndpoint->post("/determineService", requestPayload);
+    json responseMessage = check response.getJsonPayload();
+    log:printInfo("Response: " + responseMessage.toString());
     printSummary(reports);
+     io:println("INFORMATION SAVED/POSTED");
 }
 
 function getUserInput() returns json|error {
