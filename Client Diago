@@ -101,13 +101,17 @@ public function main() returns error? {
     string requestType = io:readln();
 
     if (requestType.toLowerAscii() == "delivery") {
-        check handleDeliveryRequest();
+         error? handleDeliveryRequestResult = handleDeliveryRequest();
+         if handleDeliveryRequestResult is error {
+
+         }
     } else if (requestType.toLowerAscii() == "tracking") {
         io:println("TRACKING MODE ON");
     } else {
         io:println("Invalid request type. Please enter 'delivery' or 'tracking'.");
     }
 }
+
 
 function handleDeliveryRequest() returns error? {
     http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
