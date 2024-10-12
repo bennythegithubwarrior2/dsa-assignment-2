@@ -175,35 +175,6 @@ service /programmes on new http:Listener(9090) {
         return caller->respond(res);
     }
 
-    // 6. Retrieve all the programmes that are due for review
-    resource function get review(http:Caller caller, http:Request req) returns error? {
-        Programme[] dueProgrammes = [];
-
-        // Get the current UTC date and time
-        time:Utc currentUtc = time:utcNow();
-        time:Civil currentDateTime = time:utcToCivil(currentUtc);
-
-        // Iterate over all programmes and check if they are due for review
-        foreach var programme in programmes {
-            // Convert registration date to UTC
-            time:Utc|error regUtc = time:utcFromString(programme.registrationDate + "T00:00:00Z");
-            if regUtc is time:Utc {
-                time:Civil regDateTime = time:utcToCivil(regUtc);
-                int yearsDifference = currentDateTime.year - regDateTime.year;
-
-                // If the programme is older than 5 years, or exactly 5 years and due for review
-                if yearsDifference > 5 ||
-                    (yearsDifference == 5 && (
-                        currentDateTime.month > regDateTime.month ||
-                        (currentDateTime.month == regDateTime.month && currentDateTime.day >= regDateTime.day)
-                    )) {
-                    dueProgrammes.push(programme);
-                }
-            }
-        }
-        // Return the list of programmes due for review
-        return caller->respond(dueProgrammes);
-    }
 
     // 7. Retrieve all the programmes that belong to the same faculty
     resource function get faculty/[string facultyName](http:Caller caller, http:Request req) returns error? {
