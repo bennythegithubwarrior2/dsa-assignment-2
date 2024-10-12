@@ -1,0 +1,46 @@
+import ballerina/http;
+import ballerina/log;
+
+const int EXPRESS_TIME_CONFIRM = 10;
+const int DISTANCE_CONFIRM = 100;
+const int STANDARD_TIME_CONFIRM = 20;
+
+type ShipmentRequest record {
+    string shipmentType;
+    int pickupLocation;
+    int deliveryLocation;
+    int preferredTime;
+    string firstName;
+    string lastName;
+    string contactNumber;
+};
+
+// Define the function outside the service to ensure it's recognized
+function determineServiceType(ShipmentRequest request) returns string {
+    log:printInfo("Determining service type for request: " + request.toString());
+    if (request.pickupLocation > DISTANCE_CONFIRM) {
+        log:printInfo("Service type determined: International");
+        return "International";
+    } else if (request.preferredTime > EXPRESS_TIME_CONFIRM) {
+        log:printInfo("Service type determined: Standard");
+        return "Standard";
+    } else if (request.preferredTime < STANDARD_TIME_CONFIRM) {
+        log:printInfo("Service type determined: Express");
+        return "Express";
+    } else {
+        log:printInfo("Service type determined: Unknown");
+        return "Unknown";
+    }
+}
+
+service /logistics on new http:Listener(9090) {
+
+    resource function post determineService(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        ShipmentRequest shipmentRequest = check payload.cloneWithType(ShipmentRequest);
+
+        string serviceType = determineServiceType(shipmentRequest);
+        json response = { "serviceType": serviceType, "message": "Service determined successfully" };
+        check caller->respond(response);
+    }
+}
