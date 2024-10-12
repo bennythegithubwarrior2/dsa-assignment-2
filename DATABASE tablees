@@ -1,0 +1,27 @@
+CREATE TABLE DeliverySchedules (
+    ScheduleID INT PRIMARY KEY AUTO_INCREMENT,
+    ShippingID INT NOT NULL,
+    PickupLocation VARCHAR(255) NOT NULL,
+    DeliveryLocation VARCHAR(255) NOT NULL,
+    PreferredTimeSlots VARCHAR(100) NOT NULL,
+    FOREIGN KEY (ShippingID) REFERENCES ShippingDetails(ShippingID)
+);
+
+
+CREATE TABLE ShippingDetails (
+    ShippingID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT NOT NULL,
+    ShippingMethod VARCHAR(50) NOT NULL,
+    ShippingCost DECIMAL(10, 2) NOT NULL,
+    ShippingDate DATE NOT NULL,
+    FOREIGN KEY (CustomerID) REFERENCES CustomerDetails(CustomerID)
+);
+
+CREATE TABLE CustomerDetails (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Phone VARCHAR(15),
+    Address VARCHAR(255) NOT NULL
+);
