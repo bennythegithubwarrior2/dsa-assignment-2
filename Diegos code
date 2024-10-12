@@ -171,3 +171,11 @@ Programme[] programmes = [];
         return caller->respond(facultyProgrammes);
     }
 }
+
+ // Check if a programme with the same code already exists
+        foreach var existingProgramme in programmes {
+            if existingProgramme.programmeCode == programme.programmeCode {
+                // Send 409 Conflict if programme code is already used
+                return caller->respond(buildErrorResponse(409, "Programme code already exists"));
+            }
+        }
