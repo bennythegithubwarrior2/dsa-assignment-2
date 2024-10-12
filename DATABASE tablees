@@ -7,7 +7,7 @@ CREATE TABLE DeliverySchedules (
     FOREIGN KEY (ShippingID) REFERENCES ShippingDetails(ShippingID)
 );
 
-CREATE TABLE ServicableAreas(
+CREATE TABLE ServiceableAreas(
     AreaID INT PRIMARY KEY AUTO_INCREMENT,
     AreaName VARCHAR(100) NOT NULL,
     DistanceFromHQ INT NOT NULL
