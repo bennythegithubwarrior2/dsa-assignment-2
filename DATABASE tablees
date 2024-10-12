@@ -31,3 +31,35 @@ CREATE TABLE CustomerDetails (
     Phone VARCHAR(15),
     Address VARCHAR(255) NOT NULL
 );
+
+
+
+CREATE TABLE ServicableAreas(
+    AreaID INT PRIMARY KEY AUTO_INCREMENT,
+    AreaName VARCHAR(100) NOT NULL,
+    DistanceFromHQ INT NOT NULL CHECK (DistanceFromHQ BETWEEN 1 AND 100)
+);
+
+
+
+INSERT INTO ServicableAreas (AreaName, DistanceFromHQ) VALUES
+('Rehoboth', 85),
+('Okahandja', 70),
+('Otjiwarongo', 250),
+('Swakopmund', 380),
+('Walvis Bay', 400),
+('Gobabis', 200),
+('Mariental', 270),
+('Karibib', 200),
+('Outjo', 320),
+('Ondangwa', 700),
+('Oshakati', 710),
+('Rundu', 730),
+('Luderitz', 700),
+('Keetmanshoop', 500),
+('Tsumeb', 420),
+('Katima Mulilo', 1050),
+('Henties Bay', 370),
+('Omaruru', 240),
+('Grootfontein', 460),
+('Usakos', 190);
