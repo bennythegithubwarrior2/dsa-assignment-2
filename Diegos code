@@ -44,3 +44,9 @@ service /logistics on new http:Listener(9090) {
         check caller->respond(response);
     }
 }
+
+
+ // Add the new programme to the array in a thread-safe manner
+        lock {
+            programmes.push(programme);
+        }
