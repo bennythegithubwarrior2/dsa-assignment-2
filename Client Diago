@@ -3,4 +3,18 @@ import ballerina/log;
 
 public function main() returns error? {
     http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
+
+    json requestPayload = {
+        shipmentType: "standard",
+        pickupLocation: 50,
+        deliveryLocation: 150,
+        preferredTime: 15,
+        firstName: "John",
+        lastName: "Doe",
+        contactNumber: "1234567890"
+    };
+
+    http:Response response = check clientEndpoint->post("/determineService", requestPayload);
+    json responseMessage = check response.getJsonPayload();
+    log:printInfo("Response: " + responseMessage.toString());
 }
