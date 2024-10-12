@@ -63,3 +63,72 @@ INSERT INTO ServicableAreas (AreaName, DistanceFromHQ) VALUES
 ('Omaruru', 240),
 ('Grootfontein', 460),
 ('Usakos', 190);
+-------------------------------------------UPDATED VERSION---------------------------------------------------------
+
+
+-- Create the database
+CREATE DATABASE dsa2;
+
+-- Use the newly created database
+USE dsa2;
+
+-- Create the DeliverySchedules table
+CREATE TABLE DeliverySchedules (
+    ScheduleID INT PRIMARY KEY AUTO_INCREMENT,
+    ShippingID INT NOT NULL,
+    PickupLocation VARCHAR(255) NOT NULL,
+    DeliveryLocation VARCHAR(255) NOT NULL,
+    PreferredTimeSlots VARCHAR(100) NOT NULL, 
+    FOREIGN KEY (ShippingID) REFERENCES ShippingDetails(ShippingID)
+);
+
+-- Create the ServiceableAreas table
+CREATE TABLE ServiceableAreas (
+    AreaID INT PRIMARY KEY AUTO_INCREMENT,
+    AreaName VARCHAR(100) NOT NULL,
+    DistanceFromHQ INT NOT NULL
+);
+
+-- Create the ShippingDetails table
+CREATE TABLE ShippingDetails (
+    ShippingID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT NOT NULL,
+    ShippingMethod VARCHAR(50) NOT NULL,
+    ShippingCost DECIMAL(10, 2) NOT NULL,
+    ShippingDate DATE NOT NULL,
+    FOREIGN KEY (CustomerID) REFERENCES CustomerDetails(CustomerID)
+);
+
+-- Create the CustomerDetails table
+CREATE TABLE CustomerDetails (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Phone VARCHAR(15),
+    Address VARCHAR(255) NOT NULL
+);
+
+-- Insert data into ServiceableAreas table
+INSERT INTO ServiceableAreas (AreaName, DistanceFromHQ)
+VALUES 
+('Windhoek', 1),
+('Okahandja', 2),
+('Rehoboth', 3),
+('Gobabis', 4),
+('Mariental', 5),
+('Otjiwarongo', 6),
+('Karibib', 7),
+('Swakopmund', 8),
+('Walvis Bay', 9),
+('Tsumeb', 10),
+('Outjo', 11),
+('Rundu', 50),
+('Keetmanshoop', 51),
+('Lüderitz', 52),
+('Ongwediva', 75),
+('Ondangwa', 76),
+('Oshakati', 77),
+('Eenhana', 90),
+('Omuthiya', 91),
+('Oshikango', 100);
