@@ -82,3 +82,65 @@ function printSummary(json[] reports) {
         io:println(report.toString());
     }
 }
+--------------------------------V3---------------------------------------
+import ballerina/http;
+import ballerina/io;
+import ballerina/log;
+
+public function main() returns error? {
+    json[] reports = [];
+    boolean continueInput = true;
+
+    while (continueInput) {
+        json requestPayload = getUserInput();
+        reports.push(requestPayload);
+
+        io:println("Do you want to enter another request? (yes/no): ");
+        string userResponse = io:readln();
+        if (userResponse.toLowerAscii() != "yes") {
+            continueInput = false;
+        }
+    }
+
+    printSummary(reports);
+}
+
+function getUserInput() returns json|error {
+    io:println("Enter shipment type (standard/express/international): ");
+    string shipmentType = io:readln();
+
+    io:println("Enter pickup location: ");
+    int pickupLocation = check 'int:fromString(io:readln());
+
+    io:println("Enter delivery location: ");
+    int deliveryLocation = check 'int:fromString(io:readln());
+
+    io:println("Enter preferred time: ");
+    int preferredTime = check 'int:fromString(io:readln());
+
+    io:println("Enter first name: ");
+    string firstName = io:readln();
+
+    io:println("Enter last name: ");
+    string lastName = io:readln();
+
+    io:println("Enter contact number: ");
+    string contactNumber = io:readln();
+
+    return {
+        shipmentType: shipmentType,
+        pickupLocation: pickupLocation,
+        deliveryLocation: deliveryLocation,
+        preferredTime: preferredTime,
+        firstName: firstName,
+        lastName: lastName,
+        contactNumber: contactNumber
+    };
+}
+
+function printSummary(json[] reports) {
+    io:println("SUMMARY OF CHOICES:");
+    foreach var report in reports {
+        io:println(report.toString());
+    }
+}
