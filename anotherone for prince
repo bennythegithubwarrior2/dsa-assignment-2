@@ -1,6 +1,6 @@
 kafka-topics.bat --create --bootstrap-server localhost:9092 --topic CustomerDetails
 
-kafka-console-producer.bat --broker-list localhost:9092 --topic 
+kafka-console-producer.bat --broker-list localhost:9092 --topic CustomerDetails
 >{"FirstName:" "Benjamin" "Lastname:" "Nehoya", "phone:" "0814066550", "Address:" "QuentaStreet"}
 >{"FirstName:" "Prince" "Lastname:" "Itope", "phone:" "0813454950", "Address:" "Erospark"}
 >{"FirstName:" "Diago" "Lastname:" "De Olivera", "phone:" "0813245250", "Address:" "Khomasdal Ext"}
