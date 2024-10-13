@@ -140,3 +140,23 @@ ADD COLUMN Country varchar(100);
 UPDATE ServiceableAreas
 SET Country = 'Namibia'
 WHERE DistanceFromHQ <= 100;
+
+INSERT INTO ServiceableAreas (AreaName, DistanceFromHQ, Country)
+VALUES 
+('Benguela', 104, 'Angola'),
+('Luanda', 107, 'Angola'),
+('Cabinda', 109, 'Angola');
+
+INSERT INTO ServiceableAreas (AreaName, DistanceFromHQ, Country)
+VALUES 
+('Pretoria', 120, 'SouthAfrica'),
+('Durban', 123, 'SouthAfrica'),
+('CapeTown', 124, 'SouthAfrica');
+
+INSERT INTO ServiceableAreas (AreaName, DistanceFromHQ, Country)
+VALUES 
+('Berlin', 180, 'Germany'),
+('Paris', 190, 'France'),
+('Tokyo', 320, 'Japan');
+
+
