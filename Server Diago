@@ -27,3 +27,61 @@ public function main() returns error? {
     int fetchedLocationDistance = check fetchLocationDistance(areaName);
     log:printInfo("Fetched Location Distance: " + fetchedLocationDistance.toString());
 }
+
+
+
+
+---------------------------------------ORIGINAL-------------------------------------------------------
+import ballerina/http;
+import ballerina/log;
+
+const string DB_URL = "jdbc:mysql://localhost:3306/dsa_assignment";
+const string DB_USER = "root";
+const string DB_PASSWORD = "dsa123";
+
+
+const int EXPRESS_TIME_CONFIRM = 10;
+const int DISTANCE_CONFIRM = 100;
+const int STANDARD_TIME_CONFIRM = 20;
+const int fetchedLocationDistance=0;
+
+type ShipmentRequest record {
+    string shipmentType;
+    string pickupLocation;
+    string deliveryLocation;  
+    int preferredTime;
+    string firstName;
+    string lastName;
+    string contactNumber;
+};
+
+function determineServiceType(ShipmentRequest request) returns string {
+    log:printInfo("Determining service type for request: " + request.toString());
+    if (fetchedLocationDistance > DISTANCE_CONFIRM) {
+        log:printInfo("Service type determined: International");
+        return "International";
+    } else if (request.preferredTime > EXPRESS_TIME_CONFIRM) {
+        log:printInfo("Service type determined: Standard");
+        return "Standard";
+    } else if (request.preferredTime < STANDARD_TIME_CONFIRM) {
+        log:printInfo("Service type determined: Express");
+        return "Express";
+    } else {
+        log:printInfo("Service type determined: Unknown");
+        return "Unknown";
+    }
+}
+
+
+service /logistics on new http:Listener(9090) {
+
+    resource function post determineService(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        ShipmentRequest shipmentRequest = check payload.cloneWithType(ShipmentRequest);
+
+        string serviceType = determineServiceType(shipmentRequest);
+        json response = { "serviceType": serviceType, "message": "Service determined successfully" };
+        check caller->respond(response);
+    }
+}
+
