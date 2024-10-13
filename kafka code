@@ -1,0 +1,93 @@
+import ballerina/io;
+import ballerinax/kafka;
+
+type requestShipment readonly & record {
+    string shipmentType;
+    string pickupLocation;
+    string deliveryLocation;  
+    int preferredTime;
+    string firstName;
+    string lastName;
+    string contactNumber;
+};
+
+type LocationDistance readonly & record {
+    int DistanceFromHQ;
+};
+
+type Client readonly & record {
+    int id?;
+    string Firstname;
+    string Lastname;
+    string address;
+    string phone;
+};
+
+type Tracking readonly & record{
+string trackingid;
+string Firstname;
+    string Lastname;
+
+}
+
+
+public function main() returns error? {
+    kafka:Producer prod = check new (kafka:DEFAULT_URL);
+    io:println("Welcome to the Kafka tutorial...");
+
+    // Read user input for requestShipment
+    io:println("Enter shipment type:");
+    string shipmentType = io:readln();
+    io:println("Enter pickup location:");
+    string pickupLocation = io:readln();
+    io:println("Enter delivery location:");
+    string deliveryLocation = io:readln();
+    io:println("Enter preferred time:");
+    int preferredTime = check 'int:fromString(io:readln());
+    io:println("Enter first name:");
+    string firstName = io:readln();
+    io:println("Enter last name:");
+    string lastName = io:readln();
+    io:println("Enter contact number:");
+    string contactNumber = io:readln();
+
+    requestShipment shipmentMsg = {
+        shipmentType: shipmentType,
+        pickupLocation: pickupLocation,
+        deliveryLocation: deliveryLocation,
+        preferredTime: preferredTime,
+        firstName: firstName,
+        lastName: lastName,
+        contactNumber: contactNumber
+    };
+
+    // Read user input for LocationDistance
+    io:println("Enter distance from HQ:");
+    int distanceFromHQ = check 'int:fromString(io:readln());
+
+    LocationDistance distanceMsg = {
+        DistanceFromHQ: distanceFromHQ
+    };
+
+    // Read user input for Client
+    io:println("Enter client first name:");
+    string clientFirstName = io:readln();
+    io:println("Enter client last name:");
+    string clientLastName = io:readln();
+    io:println("Enter client address:");
+    string clientAddress = io:readln();
+    io:println("Enter client phone:");
+    string clientPhone = io:readln();
+
+    Client clientMsg = {
+        Firstname: clientFirstName,
+        Lastname: clientLastName,
+        address: clientAddress,
+        phone: clientPhone
+    };
+
+    // Send messages to Kafka topics
+    check prod->send({topic: "detailsCustomer", value: clientMsg});
+    check prod->send({topic: "requestShipment", value: shipmentMsg});
+    check prod->send({topic: "LocationDistance", value: distanceMsg});
+}
