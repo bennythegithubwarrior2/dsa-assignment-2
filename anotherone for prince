@@ -7,6 +7,9 @@ kafka-console-producer.bat --broker-list localhost:9092 --topic detailsCustomer
 >{"FirstName:" "Zin", "Lastname:" "Hailapa", "phone:" "0815062130", "Address:" "Wanaheda"}
 
 kafka-topics.bat --create --bootstrap-server localhost:9092 --topic ShipmentRequest
+
+kafka-console-producer.bat --broker-list localhost:9092 --topic ShipmentRequest
+
 >{"Shipment type:" "Express", "pickup location:" "Rehoboth", "delivery location:" "Windhoek", "preffered time:" "120"}
 >{"Shipment type:" "International", "pickup location:" "Windhoek", "delivery location:" "Tokyo", "preffered time:" "100"}
 >{"Shipment type:" "Standard", "pickup location:" "Oshakati", "delivery location:" "Oshakati", "preffered time:" "12"}
@@ -15,6 +18,9 @@ kafka-topics.bat --create --bootstrap-server localhost:9092 --topic ShipmentRequ
 preffe
 
 kafka-topics.bat --create --bootstrap-server localhost:9092 --topic LocationDistance
+
+kafka-console-producer.bat --broker-list localhost:9092 --topic ShipmentRequest
+
 >{"distance from HQ:" "107", "Country:" "Angola", "AreaID:" "23"}
 >{"distance from HQ:" "80", "Country:" "Namibia", "AreaID:" "18"}
 >{"distance from HQ:" "1", "Country:" "Namibia", "AreaID:" "1"}
