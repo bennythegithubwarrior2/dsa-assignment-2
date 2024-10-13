@@ -174,3 +174,18 @@ function saveToDatabase(Client Client, ShipmentRequest shipmentRequest) returns 
 }
 mysql:Client dbClient = check new (host = "127.0.0.1", user = "bennyman123", password = "Sunday11", database = "dsaproject");
 
+
+------------------------------NN-------------------------------------
+
+CREATE TABLE shipment_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    shipmentType VARCHAR(255),
+    pickupLocation VARCHAR(255),
+    deliveryLocation VARCHAR(255),
+    preferredTime INT,
+    firstName VARCHAR(255),
+    lastName VARCHAR(255),
+    contactNumber VARCHAR(255)
+);
+
+
