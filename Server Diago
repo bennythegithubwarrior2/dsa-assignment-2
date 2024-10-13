@@ -149,13 +149,13 @@ function determineServiceType(ShipmentRequest request) returns string|error {
     int locationDistance = check fetchLocationDistance(request.deliveryLocation);
 
     if (locationDistance > DISTANCE_CONFIRM) {
-        log:printInfo("Service type determined: International");
+        log:printInfo("Recommended service type: International");
         return "International";
     } else if (request.preferredTime > EXPRESS_TIME_CONFIRM) {
-        log:printInfo("Service type determined: Standard");
+        log:printInfo("Recommended service type: Standard");
         return "Standard";
     } else if (request.preferredTime < STANDARD_TIME_CONFIRM) {
-        log:printInfo("Service type determined: Express");
+        log:printInfo("Recommended service type: Express");
         return "Express";
     } else {
         log:printInfo("Service type determined: Unknown");
@@ -177,4 +177,3 @@ service /logistics on new http:Listener(9090) {
 function init() {
     log:printInfo("---------SERVER IS RUNNING----------");
 }
-
