@@ -19,7 +19,7 @@ preffe
 
 kafka-topics.bat --create --bootstrap-server localhost:9092 --topic LocationDistance
 
-kafka-console-producer.bat --broker-list localhost:9092 --topic ShipmentRequest
+kafka-console-producer.bat --broker-list localhost:9092 --topic LocationDistance
 
 >{"distance from HQ:" "107", "Country:" "Angola", "AreaID:" "23"}
 >{"distance from HQ:" "80", "Country:" "Namibia", "AreaID:" "18"}
