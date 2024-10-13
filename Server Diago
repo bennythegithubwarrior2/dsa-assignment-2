@@ -177,3 +177,130 @@ service /logistics on new http:Listener(9090) {
 function init() {
     log:printInfo("---------SERVER IS RUNNING----------");
 }
+
+
+
+
+----------------------prince version---------------------------------------
+
+
+import ballerina/http;
+import ballerina/log;
+import ballerina/sql;
+import ballerinax/mysql;
+import ballerinax/mysql.driver as _;
+import ballerina/io;
+
+const string DB_URL = "jdbc:mysql://127.0.0.1:3306/dsa_assignment";
+const string DB_NAME = "dsa_assignment";
+const string DB_USER = "kenny";
+const string DB_PASSWORD = "Kennyisthegoat21";
+const int DB_PORT = 3306;
+
+const int EXPRESS_TIME_CONFIRM = 10;
+const int DISTANCE_CONFIRM = 100;
+const int STANDARD_TIME_CONFIRM = 20;
+
+type ShipmentRequest record {
+    string shipmentType;
+    string pickupLocation;
+    string deliveryLocation;  
+    int preferredTime;
+    string firstName;
+    string lastName;
+    string contactNumber;
+};
+
+type LocationDistance record {
+    int DistanceFromHQ;
+};
+
+// Define the client record
+type Client record {
+    int id?;
+    string Firstname;
+    string Lastname;
+    string address;
+    string phone;
+};
+
+function fetchLocationDistance(string areaName) returns int|error {
+    mysql:Client|sql:Error dbClientResult = new ("localhost", DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
+
+    if (dbClientResult is sql:Error) {
+        return dbClientResult;
+    }
+
+    mysql:Client dbClient = <mysql:Client>dbClientResult;
+    log:printInfo("CONNECTED TO DATABASE");
+
+    int locationDistance = 0;
+    sql:ParameterizedQuery query = `SELECT DistanceFromHQ FROM serviceableareas WHERE AreaName = ${areaName}`;
+
+    stream<LocationDistance, sql:Error?> resultStream = dbClient->query(query);
+
+    error? e = resultStream.forEach(function(LocationDistance result) {
+        locationDistance = result.DistanceFromHQ;
+    });
+
+    if (e is error) {
+        log:printError("Error occurred while processing the result stream", e);
+    }
+
+    check dbClient.close();
+    return locationDistance;
+}
+
+function determineServiceType(ShipmentRequest request) returns string|error {
+    log:printInfo("Determining service type for request: " + request.toString());
+    int locationDistance = check fetchLocationDistance(request.deliveryLocation);
+
+    if (locationDistance > DISTANCE_CONFIRM) {
+        log:printInfo("Recommended service type: International");
+        return "International";
+    } else if (request.preferredTime > EXPRESS_TIME_CONFIRM) {
+        log:printInfo("Recommended service type: Standard");
+        return "Standard";
+    } else if (request.preferredTime < STANDARD_TIME_CONFIRM) {
+        log:printInfo("Recommended service type: Express");
+        return "Express";
+    } else {
+        log:printInfo("Service type determined: Unknown");
+        return "Unknown";
+    }
+}
+ mysql:Client dbClient = check new (host = "127.0.0.1", user = "kenny", password = "Kennyisthegoat21", database = "dsa_assignment");
+
+service /logistics on new http:Listener(9090) {
+   
+    // Resource to add a new client
+    resource function post .(http:Caller caller, http:Request req) returns error? {
+        json|http:ClientError payload = req.getJsonPayload();
+        if (payload is http:ClientError) {
+            check caller->respond("Invalid JSON payload");
+            return;
+        }
+
+        Client newClient = check payload.cloneWithType(Client);
+        sql:ParameterizedQuery sqlQuery = `INSERT INTO customerdetails (FirstName, LastName, Phone, Address) VALUES (${newClient.Firstname}, ${newClient.Lastname}, ${newClient.phone}, ${newClient.address})`;
+        sql:ExecutionResult|sql:Error result = dbClient->execute(sqlQuery);
+        if (result is sql:ExecutionResult) {
+            check caller->respond("Client added successfully");
+            io:println("Client added successfully");
+        } else {
+            check caller->respond("Failed to add client");
+        }
+    }
+    resource function post determineService(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        ShipmentRequest shipmentRequest = check payload.cloneWithType(ShipmentRequest);
+
+        string serviceType = check determineServiceType(shipmentRequest);
+        json response = { "serviceType": serviceType, "message": "Service determined successfully" };
+        check caller->respond(response);
+    }
+}
+
+function init() {
+    log:printInfo("---------SERVER IS RUNNING----------");
+}
