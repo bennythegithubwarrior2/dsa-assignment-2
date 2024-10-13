@@ -317,7 +317,6 @@ import ballerinax/mysql.driver as _;
 const string DB_URL = "jdbc:mysql://localhost:3306/dsa_assignment";
 const string DB_USER = "dsa_user";
 const string DB_PASSWORD = "dsa123";
-const int DB_PORT = 3306;
 
 const int EXPRESS_TIME_CONFIRM = 10;
 const int DISTANCE_CONFIRM = 100;
@@ -418,10 +417,9 @@ service /logistics on new http:Listener(8080) {
             check caller->respond({ message: "Data saved successfully" });
         }
     }
+    
 }
 
 function init() {
     log:printInfo("---------SERVER IS RUNNING----------");
 }
-
-
