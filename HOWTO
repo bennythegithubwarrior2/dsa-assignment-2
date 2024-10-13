@@ -13,37 +13,38 @@ your project structure should look like this
 
 ---------HOW TO RUN CLIENT AND SERVER--------------------
 
-TERMINAL-1 { - use cd and go till server 
+TERMINAL-1 { - use cd and go till your server folder
              - then type bal run server.bal }
 
-          ## create a user on the database and a password and change the DB_USER and DB_Password according 
-          to the user you creating in mysql otherwise ERRORS!!!
+          ## in your database, create a user and a password and change the DB_USER and DB_Password variables at the server code according 
+          to the user that you created otherwise ERRORS!!!
 
-TERMINAL-2 { -use cs and go till client
+TERMINAL-2 { -use cs and go till your client folder
              - then type bal run client.bal }
 
-            ## do not enter rubbish on the deliverylocation,instead enter Ongwediva,or Oshakati or anything like that 
-                because its now fetching actual data from the database
+            ## do not enter rubbish on the deliverylocation,instead enter Ongwediva,or Oshakati or any other town thats in the database
+            because its now fetching actual data from the database (just the town distance for now)
 
 
 -----------------WHAT TO EXPECT-----------------------
 
-TERMINAL-1 { should print "---------SERVER IS RUNNING----------"}
-TERINAL-2 { should prompt for the normal prompts and recommend a delivery service FOR NOW}
+TERMINAL-1 { should print "---------SERVER IS RUNNING----------"} meaning server is runnning dumbass
+TERINAL-2 { should prompt for the normal prompts and recommend a delivery service (FOR NOW) }
 
 --------------------KEY NOTES------------------------
 
 if you run the client and choose delivery service as international
 
 the server must recommend/ print saying recommended is standard,,,this means its working correctly cause in the database ther is no 
-areaname that is over 100 from HQ yet,we will have to populate that data..
+town that is over 100 from HQ yet, we will have to populate that data..
 
 so the server now is basically taking the deliverylocation from client, fetching the town that matches that name,and getting the 
-distance saved in the database
+distance saved in the database if distance is over 100 its automatically international
+(which wont happen cause we still only have distances of less then 100 in our database)
 
 ------------------------SOME AREAS TO WORK ON-------------------
  > [database side] adding new data in the serviceable table for towns out of namibia and setting their distance to 100+ to show that its international
- > [server side] adding a new function that saves the user's request in the database (considering the tables and using all of them)
+ > [server side] adding a new function that saves the user's request in the database (considering the tables and using all of their attributes)
  > [server side] adding a new function to fetch the order data using an order_id (we might need to use orderID as foreign key in the other tables)
  > [client side] adding a new function to request for order data (should be a get request not a post request)
 
