@@ -6,9 +6,9 @@ kafka-console-producer.bat --broker-list localhost:9092 --topic detailsCustomer
 >{"FirstName:" "Diago", "Lastname:" "De Olivera", "phone:" "0813245250", "Address:" "Khomasdal Ext"}
 >{"FirstName:" "Zin", "Lastname:" "Hailapa", "phone:" "0815062130", "Address:" "Wanaheda"}
 
-kafka-topics.bat --create --bootstrap-server localhost:9092 --topic ShipmentRequest
+kafka-topics.bat --create --bootstrap-server localhost:9092 --topic requestShipment
 
-kafka-console-producer.bat --broker-list localhost:9092 --topic ShipmentRequest
+kafka-console-producer.bat --broker-list localhost:9092 --topic requestShipment
 
 >{"Shipment type:" "Express", "pickup location:" "Rehoboth", "delivery location:" "Windhoek", "preffered time:" "120"}
 >{"Shipment type:" "International", "pickup location:" "Windhoek", "delivery location:" "Tokyo", "preffered time:" "100"}
