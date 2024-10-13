@@ -132,3 +132,11 @@ VALUES
 ('Eenhana', 90),
 ('Omuthiya', 91),
 ('Oshikango', 100);
+
+-------------------------------------------new edition-----------------------------------------
+ALTER TABLE serviceablearea
+ADD COLUMN Country varchar(100);
+
+UPDATE ServiceableAreas
+SET Country = 'Namibia'
+WHERE DistanceFromHQ <= 100;
