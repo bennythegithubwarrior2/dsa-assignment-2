@@ -49,4 +49,12 @@ distance saved in the database if distance is over 100 its automatically interna
  > [client side] adding a new function to request for order data (should be a get request not a post request)
 
 thats all i can think of RN
- 
+
+NEW AREAS TO WORK ON---------------14\10\2024--------------------------------------------------------------------------------------------------------------------------
+FOR KAFKA FILE(file with kafka code innit)
+>for tracking we have to get a code that gets tracking id and customer information and displays it in a message
+>CREATE A TRACKING topic with appropriate information.
+>Consumer implementation(come up with consumer code)
+
+.FOR SERVER.bal connect database and server to store information in database. server can already retrieve information
+>when you click on tracking it can turn on kafka cluster
