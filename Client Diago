@@ -181,3 +181,109 @@ function printSummary(json[] reports) {
         io:println(report.toString());
     }
 }
+
+--------------------------------------VERSION 4----------------------------------------------------------
+
+import ballerina/http;
+import ballerina/io;
+import ballerina/log;
+
+public function main() returns error? {
+    io:println("Enter request type (delivery/tracking): ");
+    string requestType = io:readln();
+
+    if (requestType.toLowerAscii() == "delivery") {
+        error? handleDeliveryRequestResult = handleDeliveryRequest();
+        if (handleDeliveryRequestResult is error) {
+            log:printError("Error handling delivery request", handleDeliveryRequestResult);
+        }
+    } else if (requestType.toLowerAscii() == "tracking") {
+        io:println("TRACKING MODE ON");
+    } else {
+        io:println("Invalid request type. Please enter 'delivery' or 'tracking'.");
+    }
+
+    io:println("Use Server's Recommendation (yes/no")
+    string confirmation = io:readln();
+    boolean confirm = confirmation == "yes"; 
+}
+
+
+function handleDeliveryRequest() returns error? {
+    http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
+    io:println("+++");
+
+    json[] reports = [];
+    json[] responses = [];
+    boolean continueInput = true;
+
+    while (continueInput) {
+        json requestPayload = check getUserInput();
+        reports.push(requestPayload);
+
+        io:println("Do you want to enter another request? (yes/no): ");
+        string? userResponse = io:readln();
+        if (userResponse is string && userResponse.toLowerAscii() != "yes") {
+            continueInput = false;
+        }
+    }
+
+    foreach var requestPayload in reports {
+        http:Response response = check clientEndpoint->post("/determineService", requestPayload);
+        json responseMessage = check response.getJsonPayload();
+        responses.push(responseMessage);
+        log:printInfo("Response: " + responseMessage.toString());
+    }
+
+    printSummary(reports);
+    printResponses(responses);
+    io:println("INFORMATION SAVED/POSTED");
+}
+
+function getUserInput() returns json|error {
+    io:println("Enter shipment type (standard/express/international): ");
+    string shipmentType = io:readln();
+
+    io:println("Enter pickup location: ");
+    string pickupLocation = io:readln();
+
+    io:println("Enter delivery location: ");
+    string deliveryLocation = io:readln();
+
+    io:println("Enter preferred time: ");
+    int preferredTime = check 'int:fromString(io:readln());
+
+    io:println("Enter first name: ");
+    string firstName = io:readln();
+
+    io:println("Enter last name: ");
+    string lastName = io:readln();
+
+    io:println("Enter contact number: ");
+    string contactNumber = io:readln();
+
+    return {
+        shipmentType: shipmentType,
+        pickupLocation: pickupLocation,
+        deliveryLocation: deliveryLocation,
+        preferredTime: preferredTime,
+        firstName: firstName,
+        lastName: lastName,
+        contactNumber: contactNumber
+    };
+}
+
+function printSummary(json[] reports) {
+    io:println("SUMMARY OF CHOICES:");
+    foreach var report in reports {
+        io:println(report.toString());
+    }
+}
+
+function printResponses(json[] responses) {
+    io:println("RESPONSES FROM SERVER:");
+    foreach var response in responses {
+        io:println(response.toString());
+    }
+}
+
