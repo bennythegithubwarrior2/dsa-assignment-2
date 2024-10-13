@@ -307,6 +307,7 @@ function init() {
 
 
 -------------------------------VERSION 4-------------------------------------
+
 import ballerina/http;
 import ballerina/log;
 import ballerina/sql;
@@ -314,7 +315,6 @@ import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
 
 const string DB_URL = "jdbc:mysql://localhost:3306/dsa_assignment";
-const string DB_NAME = "dsa_assignment";
 const string DB_USER = "dsa_user";
 const string DB_PASSWORD = "dsa123";
 const int DB_PORT = 3306;
@@ -338,7 +338,7 @@ type LocationDistance record {
 };
 
 function fetchLocationDistance(string areaName) returns int|error {
-    mysql:Client|sql:Error dbClientResult = new ("localhost", DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
+    mysql:Client|sql:Error dbClientResult = new (DB_URL, DB_USER, DB_PASSWORD);
 
     if (dbClientResult is sql:Error) {
         return dbClientResult;
@@ -364,6 +364,19 @@ function fetchLocationDistance(string areaName) returns int|error {
     return locationDistance;
 }
 
+function insertShipmentRequest(ShipmentRequest request) returns error? {
+    mysql:Client dbClient = check new (DB_URL, DB_USER, DB_PASSWORD);
+
+    sql:ParameterizedQuery query = `INSERT INTO shipment_requests 
+        (shipmentType, pickupLocation, deliveryLocation, preferredTime, firstName, lastName, contactNumber) 
+        VALUES (${request.shipmentType}, ${request.pickupLocation}, ${request.deliveryLocation}, 
+                ${request.preferredTime}, ${request.firstName}, ${request.lastName}, ${request.contactNumber})`;
+
+    sql:ExecutionResult _ = check dbClient->execute(query);
+    check dbClient.close();
+    log:printInfo("Data inserted successfully");
+}
+
 function determineServiceType(ShipmentRequest request) returns string|error {
     log:printInfo("Determining service type for request: " + request.toString());
     int locationDistance = check fetchLocationDistance(request.deliveryLocation);
@@ -383,11 +396,6 @@ function determineServiceType(ShipmentRequest request) returns string|error {
     }
 }
 
-
-function saveToDatabase(){
-}
-
-
 service /logistics on new http:Listener(8080) {
     resource function post determineService(http:Caller caller, http:Request req) returns error? {
         json payload = check req.getJsonPayload();
@@ -397,9 +405,23 @@ service /logistics on new http:Listener(8080) {
         json response = { "recommendedService": serviceType };
         check caller->respond(response);
     }
+
+    resource function post save(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        ShipmentRequest shipmentRequest = check payload.cloneWithType(ShipmentRequest);
+
+        error? result = insertShipmentRequest(shipmentRequest);
+        if (result is error) {
+            log:printError("Error inserting data into database", result);
+            check caller->respond({ message: "Failed to save data" });
+        } else {
+            check caller->respond({ message: "Data saved successfully" });
+        }
+    }
 }
 
 function init() {
     log:printInfo("---------SERVER IS RUNNING----------");
 }
+
 
