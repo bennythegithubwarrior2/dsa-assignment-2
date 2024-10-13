@@ -159,4 +159,18 @@ VALUES
 ('Paris', 190, 'France'),
 ('Tokyo', 320, 'Japan');
 
+-------------------------------for diago---------------------------------
+function saveToDatabase(Client Client, ShipmentRequest shipmentRequest) returns error? {
+    // Insert into customerdetails table
+    sql:ParameterizedQuery insertCustomerQuery = `INSERT INTO customerdetails (FirstName, LastName, Phone) VALUES (${Client.Firstname}, ${Client.Lastname}, ${Client.phone})`;
+    sql:ExecutionResult _ = check dbClient->execute(insertCustomerQuery);
+
+    // Insert into deliveryservices table
+    sql:ParameterizedQuery insertDeliveryQuery = `INSERT INTO deliveryservices (PickupLocation, DeliveryLocation) VALUES (${shipmentRequest.pickupLocation}, ${shipmentRequest.deliveryLocation})`;
+    sql:ExecutionResult _ = check dbClient->execute(insertDeliveryQuery);
+
+    sql:ParameterizedQuery insertShippingQuery = `INSERT INTO shippingdetails (ShippingMethod) VALUES (${shipmentRequest.shipmentType})`;
+    sql:ExecutionResult _ = check dbClient->execute(insertShippingQuery);
+}
+mysql:Client dbClient = check new (host = "127.0.0.1", user = "bennyman123", password = "Sunday11", database = "dsaproject");
 
