@@ -188,6 +188,10 @@ import ballerina/http;
 import ballerina/io;
 import ballerina/log;
 
+json[] userInput = [];
+json[] recommendedInput = [];
+string keyValue = "";
+
 public function main() returns error? {
     io:println("Enter request type (delivery/tracking): ");
     string requestType = io:readln();
@@ -203,14 +207,23 @@ public function main() returns error? {
         io:println("Invalid request type. Please enter 'delivery' or 'tracking'.");
     }
 
-    io:println("Use Server's Recommendation (yes/no")
+    io:println("Use Server's Recommendation (yes/no): ");
     string confirmation = io:readln();
-    boolean confirm = confirmation == "yes"; 
+    boolean trigger = confirmation.toLowerAscii() == "yes"; 
+
+    if (trigger) {
+        updateShipmentType(userInput, keyValue);
+        io:println("Updated shipment types with server's recommendation.");
+        io:println("User Input: " + userInput.toString());
+        io:println("Recommended Input: " + recommendedInput.toString());
+    }
+    else {
+        io:println("User Input: " + userInput.toString());
+    }
 }
 
-
 function handleDeliveryRequest() returns error? {
-    http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
+    http:Client clientEndpoint = check new ("http://localhost:8080/logistics");
     io:println("+++");
 
     json[] reports = [];
@@ -235,7 +248,10 @@ function handleDeliveryRequest() returns error? {
         log:printInfo("Response: " + responseMessage.toString());
     }
 
-    printSummary(reports);
+    userInput = reports;  
+    keyValue = extractServiceType(responses[0]);  // Extracting from the first response for simplicity
+    io:println("Extracted Service Type: " + keyValue);
+
     printResponses(responses);
     io:println("INFORMATION SAVED/POSTED");
 }
@@ -273,10 +289,23 @@ function getUserInput() returns json|error {
     };
 }
 
-function printSummary(json[] reports) {
-    io:println("SUMMARY OF CHOICES:");
-    foreach var report in reports {
-        io:println(report.toString());
+function extractServiceType(json tar) returns string {
+    if tar is map<json> {
+        json? serviceType = tar["recommendedService"];
+        if serviceType is string {
+            return serviceType;
+        }
+    }
+    return "";
+}
+
+function updateShipmentType(json[] t, string newShipmentType) {
+    recommendedInput = [];
+    foreach var report in t {
+        if report is map<json> {
+            report["shipmentType"] = newShipmentType;
+            recommendedInput.push(report);
+        }
     }
 }
 
@@ -286,4 +315,3 @@ function printResponses(json[] responses) {
         io:println(response.toString());
     }
 }
-
