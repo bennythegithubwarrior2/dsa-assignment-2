@@ -103,10 +103,10 @@ public function main() returns error? {
     string requestType = io:readln();
 
     if (requestType.toLowerAscii() == "delivery") {
-         error? handleDeliveryRequestResult = handleDeliveryRequest();
-         if handleDeliveryRequestResult is error {
-
-         }
+        error? handleDeliveryRequestResult = handleDeliveryRequest();
+        if (handleDeliveryRequestResult is error) {
+            log:printError("Error handling delivery request", handleDeliveryRequestResult);
+        }
     } else if (requestType.toLowerAscii() == "tracking") {
         io:println("TRACKING MODE ON");
     } else {
@@ -114,9 +114,10 @@ public function main() returns error? {
     }
 }
 
-
 function handleDeliveryRequest() returns error? {
     http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
+    io:println("+++");
+
     json[] reports = [];
     boolean continueInput = true;
 
