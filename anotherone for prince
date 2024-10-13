@@ -1,0 +1,23 @@
+kafka-topics.bat --create --bootstrap-server localhost:9092 --topic CustomerDetails
+
+kafka-console-producer.bat --broker-list localhost:9092 --topic 
+>{"FirstName:" "Benjamin" "Lastname:" "Nehoya", "phone:" "0814066550", "Address:" "QuentaStreet"}
+>{"FirstName:" "Prince" "Lastname:" "Itope", "phone:" "0813454950", "Address:" "Erospark"}
+>{"FirstName:" "Diago" "Lastname:" "De Olivera", "phone:" "0813245250", "Address:" "Khomasdal Ext"}
+>{"FirstName:" "Zin" "Lastname:" "Hailapa", "phone:" "0815062130", "Address:" "Wanaheda"}
+
+kafka-topics.bat --create --bootstrap-server localhost:9092 --topic ShipmentRequest
+>{"Shipment type:" "Benjamin" "pickup location:" "Nehoya", "delivery location:" "0814066550", "AreaID:" "QuentaStreet"}
+>{"Shipment type:" "Prince" "pickup location:" "Itope", "delivery location:" "0813454950", "AreaID:" "Erospark"}
+>{"Shipment type:" "Diago" "pickup location:" "De Olivera", "delivery location:" "0813245250", "AreaID:" "Khomasdal Ext"}
+>{"Shipment type:" "Zin" "pickup location:" "Hailapa", "delivery location:" "0815062130", "AreaID:" "Wanaheda"}
+
+preffe
+
+kafka-topics.bat --create --bootstrap-server localhost:9092 --topic LocationDistance
+>{"distance from HQ:" "107" "Country:" "Angola", "AreaID:" "23"}
+>{"distance from HQ:" "80" "Country:" "Namibia", "AreaID:" "18"}
+>{"distance from HQ:" "1" "Country:" "Namibia", "AreaID:" "1"}
+>{"distance from HQ:" "2" "Country:" "Namibi", "AreaID:" "2"}
+
+kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from-beginning
