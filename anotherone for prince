@@ -26,4 +26,10 @@ kafka-console-producer.bat --broker-list localhost:9092 --topic ShipmentRequest
 >{"distance from HQ:" "1", "Country:" "Namibia", "AreaID:" "1"}
 >{"distance from HQ:" "2", "Country:" "Namibia", "AreaID:" "2"}
 
-kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from-beginning
+kafka-console-consumer.bat --topic detailsCustomer --bootstrap-server localhost:9092 --from-beginning
+
+kafka-console-consumer.bat --topic ShipmentRequest --bootstrap-server localhost:9092 --from-beginning
+
+kafka-console-consumer.bat --topic LocationDistance --bootstrap-server localhost:9092 --from-beginning
+
+
