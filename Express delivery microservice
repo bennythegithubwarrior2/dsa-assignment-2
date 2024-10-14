@@ -5,7 +5,7 @@ import ballerina/log;
 import ballerinax/mysql.driver as _;
 
 
-public function checkAvailableTimeslots(string deliveryDay, "Express delivery") returns (int[]|boolean|error) {
+public function checkAvailableTimeslots(string deliveryDay, string shipmentType="Express delivery") returns (int[]|boolean|error) {
     mysql:Client dbClient = check new ( 
         host = "127.0.0.1", 
         port = 3306, 
@@ -15,7 +15,7 @@ public function checkAvailableTimeslots(string deliveryDay, "Express delivery") 
     );
 
     sql:ParameterizedQuery countQuery = `SELECT COUNT(*) AS requestCount FROM shipment_requests 
-                                         WHERE deliveryDay = ${deliveryDay} AND shipmentType = ${"Express delivery"}`;
+                                         WHERE deliveryDay = ${deliveryDay} AND shipmentType = ${shipmentType}`;
 
     stream<record {}, sql:Error> countStream = dbClient->query(countQuery);
 
