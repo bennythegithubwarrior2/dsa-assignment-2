@@ -33,3 +33,19 @@ kafka-console-consumer.bat --topic ShipmentRequest --bootstrap-server localhost:
 kafka-console-consumer.bat --topic LocationDistance --bootstrap-server localhost:9092 --from-beginning
 
 
+
+
+kafka-topics.bat --create --bootstrap-server localhost:9092 --topic trackingDelivery
+
+kafka-console-producer.bat --broker-list localhost:9092 --topic trackingDelivery
+
+>{"trackingID:" "0001", "Shipment type:" "Express", "pickup location:" "Rehoboth", "delivery location:" "Windhoek", "Country:" "Namibia", "AreaID:" "3", "FirstName:" "Benjamin", "Lastname:" "Nehoya", "phone:" "0814066550" }
+>{"trackingID:" "0002", "Shipment type:" "Express", "pickup location:" "Okahandja", "delivery location:" "Windhoek", "Country:" "Namibia", "AreaID:" "2", "FirstName:" "Prince", "Lastname:" "Itope", "phone:" "0817819902" }
+>{"trackingID:" "0003", "Shipment type:" "Standard", "pickup location:" "Windhoek", "delivery location:" "Rundu", "Country:" "Namibia", "AreaID:" "50", "FirstName:" "Diago", "Lastname:" "De Olivera", "phone:" "0811234560" }
+>{"trackingID:" "0004", "Shipment type:" "International", "pickup location:" "Windhoek", "delivery location:" "", "Country:" "Namibia", "AreaID:" "3", "FirstName:" "Benjamin", "Lastname:" "Nehoya", "phone:" "0814066550" }
+
+
+
+
+
+
