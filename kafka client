@@ -193,3 +193,51 @@ function printResponses(json[] responses) {
         io:println(response.toString());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+======================toml============================
+
+
+[package]
+org = "prncf"
+name = "client_service"
+version = "0.1.0"
+distribution = "2201.9.2"
+
+[build-options]
+observabilityIncluded = true
+
+
+# Adding Kafka dependency
+[[platform.java17.dependency]]
+groupId = "org.apache.kafka"
+artifactId = "kafka-clients"
+version = "3.2.0"
+
+[dependencies]
+ballerinax.kafka = "4.2.0"
+
+
