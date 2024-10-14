@@ -1,0 +1,195 @@
+import ballerina/log;
+import ballerinax/kafka;
+import ballerina/io;
+import ballerina/http;
+
+const string KAFKA_BROKER = "localhost:9092";
+const string TRACKING_TOPIC = "trackingDelivery";
+
+type TrackingInfo record {
+    string trackingId;
+    string shipmentType;
+    string pickupLocation;
+    string deliveryLocation;
+    string country;
+    string areaID;
+    string firstName;
+    string lastName;
+    string contactNumber;
+};
+
+type ConsumerRecord record{
+    string firstName;
+    string lastName;
+    string phone;
+};
+
+
+json[] defaultInput = [
+];
+json[] recommendedInput = [
+];
+
+kafka:Consumer trackingConsumer = check new("LocalHost:9092", {
+    groupId: "tracking-group",
+    topics: "trackingDelivery"
+});
+
+TrackingInfo[] trackingInfoList = [];
+
+function startConsumer() returns error? {
+    log:printInfo("Starting Kafka consumer...");
+
+
+    // Run the consumer in a loop to poll messages continuously
+    while true {
+        // Poll the Kafka topic for messages with a timeout (e.g., 1 second)
+        kafka:Consumer records = check trackingConsumer->poll(5000);
+
+        // Process each message in the polled records
+        foreach kafka:Consumer recordItem in records.getRecords {
+            json trackingInfoJson = check recordItem.value.toJson();
+            TrackingInfo trackingInfo = check trackingInfoJson.cloneWithType(TrackingInfo);
+            trackingInfoList.push(trackingInfo);
+
+            log:printInfo("Received tracking info: " + trackingInfo.toString());
+        }
+    }
+}
+
+
+
+
+function getTrackingInfo() returns TrackingInfo[] {
+       io:println("Enter your product shipping ID");
+        string trackingId = io:readln();
+    return trackingInfoList;
+}
+public function main() returns error? {
+
+    check startConsumer();
+    
+    io:println("Enter request type (delivery/tracking): ");
+    string requestType = io:readln();
+
+    if (requestType.toLowerAscii() == "delivery") {
+        error? handleDeliveryRequestResult = handleDeliveryRequest();
+        if handleDeliveryRequestResult is error {
+            io:println("Error processing delivery request: " + handleDeliveryRequestResult.message());
+        }
+    } else if (requestType.toLowerAscii() == "tracking") {
+        io:println("TRACKING MODE ON");
+        TrackingInfo[] trackingInfos = getTrackingInfo(); 
+        if trackingInfos.length() > 0 {
+            io:println("TRACKING INFORMATION:");
+            foreach var info in trackingInfos {
+                io:println(info.toString());
+            }
+        } else {
+            io:println("No tracking information available.");
+        }
+    } else {
+        io:println("Invalid request type. Please enter 'delivery' or 'tracking'.");
+    }
+    
+    io:println("Use Server's Recommendation (yes/no): ");
+    string confirmation = io:readln();
+    boolean trigger = confirmation.toLowerAscii() == "yes"; 
+
+    if (trigger) {
+        updateShipmentType(defaultInput, recommendedInput);
+        io:println("Updated shipment types with server's recommendation.");
+        io:println("User Input: " + defaultInput.toString());
+        io:println("Recommended Input: " + recommendedInput.toString());
+    } else {
+        io:println("User Input: " + defaultInput.toString());
+    }
+
+    check sendToDatabase(defaultInput, recommendedInput);
+}
+
+function sendToDatabase(json[] userInput, json[] recommendedInput) returns error? {
+    http:Client clientEndpoint = check new ("http://localhost:8080/logistics");
+
+    json payload = {
+        "userInput": userInput,
+        "recommendedInput": recommendedInput
+    };
+
+    http:Response response = check clientEndpoint->post("/saveToDatabase", payload);
+    io:println("Server Response for saving data: ", response.getTextPayload());
+}
+
+
+function updateShipmentType(any a, any b) {
+    
+}
+
+
+function handleDeliveryRequest() returns error? {
+    http:Client clientEndpoint = check new ("http://localhost:9090/logistics");
+    io:println("+++");
+    json[] responses = [];
+    boolean continueInput = true;
+
+
+    while (continueInput) {
+        json requestPayload = check getUserInput();
+        defaultInput.push(requestPayload);
+
+        io:println("Do you want to enter another request? (yes/no): ");
+        string? userResponse = io:readln();
+        if (userResponse is string && userResponse.toLowerAscii() != "yes") {
+            continueInput = false;
+        }
+    }
+}
+    
+function getUserInput() returns json|error {
+    io:println("Enter shipment type (standard/express/international): ");
+    string shipmentType = io:readln();
+
+    io:println("Enter pickup location: ");
+    string pickupLocation = io:readln();
+
+    io:println("Enter delivery location: ");
+    string deliveryLocation = io:readln();
+
+    io:println("Enter preferred time: ");
+    int preferredTime = check 'int:fromString(io:readln());
+
+    io:println("Enter first name: ");
+    string firstName = io:readln();
+
+    io:println("Enter last name: ");
+    string lastName = io:readln();
+
+    io:println("Enter contact number: ");
+    string contactNumber = io:readln();
+
+    return {
+        shipmentType: shipmentType,
+        pickupLocation: pickupLocation,
+        deliveryLocation: deliveryLocation,
+        preferredTime: preferredTime,
+        firstName: firstName,
+        lastName: lastName,
+        contactNumber: contactNumber
+    };
+}
+ function correctInput(json[] targetData){
+
+ }
+function printSummary(json[] defaultInput) {
+    io:println("SUMMARY OF CHOICES:");
+    foreach var report in defaultInput {
+        io:println(report.toString());
+    }
+}
+
+function printResponses(json[] responses) {
+    io:println("RESPONSES FROM SERVER:");
+    foreach var response in responses {
+        io:println(response.toString());
+    }
+}
