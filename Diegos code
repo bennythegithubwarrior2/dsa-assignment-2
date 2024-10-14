@@ -249,3 +249,74 @@ public function checkAvailableTimeslots(string deliveryDay) returns (int[]|error
     return availableTimeslots;
 }
 
+=========================================================================================
+
+public function checkAvailableTimeslots(string deliveryDay, string shipmentType) returns (int[]|boolean|error) {
+    // Initialize the MySQL client
+    mysql:Client dbClient = check new ( 
+        host = "localhost", 
+        port = 3306, 
+        database = "your_database", 
+        user = "your_user", 
+        password = "your_password"
+    );
+
+    // Query to count the number of requests with the same delivery type on the given day
+    sql:ParameterizedQuery countQuery = `SELECT COUNT(*) AS requestCount FROM shipment_requests 
+                                         WHERE deliveryDay = ${deliveryDay} AND shipmentType = ${shipmentType}`;
+
+    // Execute the count query
+    stream<record {}, sql:Error> countStream = dbClient->query(countQuery);
+
+    // Variable to hold the count of requests
+    int requestCount = 0;
+
+    // Iterate through the result stream to get the count
+    error? e = countStream.forEach(function(record {} result) {
+        requestCount = check result["requestCount"];
+    });
+
+    // Close the count result stream
+    check countStream.close();
+
+    // If there are 6 or more requests, return false
+    if (requestCount >= 6) {
+        check dbClient.close();
+        return false;
+    }
+
+    // Query to get the occupied delivery times for the given delivery day
+    sql:ParameterizedQuery selectQuery = `SELECT deliveryTime FROM shipment_requests 
+                                          WHERE deliveryDay = ${deliveryDay}`;
+
+    // Execute the query
+    stream<record {}, sql:Error> resultStream = dbClient->query(selectQuery);
+
+    // Array to hold the occupied timeslots
+    int[] occupiedTimeslots = [];
+
+    // Iterate through the result stream
+    e = resultStream.forEach(function(record {} result) {
+        int deliveryTime = check result["deliveryTime"];
+        occupiedTimeslots.push(deliveryTime);
+    });
+
+    // Close the result stream
+    check resultStream.close();
+
+    // Array to hold all possible timeslots (1 to 24)
+    int[] allTimeslots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+
+    // Find the available timeslots by excluding the occupied ones
+    int[] availableTimeslots = [];
+    foreach int timeslot in allTimeslots {
+        if (!occupiedTimeslots.includes(timeslot)) {
+            availableTimeslots.push(timeslot);
+        }
+    }
+
+    // Close the database client
+    check dbClient.close();
+
+    return availableTimeslots;
+}
