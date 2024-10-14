@@ -1,0 +1,41 @@
+How to run Kafka
+----------------
+
+1> download kafka > https://downloads.apache.org/kafka/3.8.0/kafka_2.12-3.8.0.tgz
+
+Instructions
+------------
+1.) move the downloaded kafka file into C:/ Drive
+
+2.) Open cmd and type cd (file path of your kafka file)
+
+3.) paste the following code to run zookeeper.
+-----------------------------------------------------------------
+.\bin\windows\zookeeper-serverstart.bat .\config\zookeeper.properties
+-----------------------------------------------------------------
+SHOULD start the zookeeper
+
+4.) open a new cmd
+
+Repeat step two to work in the Kafka file
+
+5.) paste the following code to run Kafka server.
+---------------------------------------------------
+.\bin\windows\kafka-server-start.bat
+.\config\server.properties
+---------------------------------------------------
+should run the kafka server
+
+6.) open the kafka file in C:/ drive enter windows and then bin file path should look like
+"C:\Kafka\bin\windows" open the cmd in this file path.
+---------------------------------------------------------------------------------------------------------
+
+HERE WE WILL CREATE THE TOPICS IN THE PRODUCER AND PRINT TO CONSUMER
+---------------------------------------------------------------------------------------------------------
+7.) Code to Create the topic
+kafka-topics.bat --create  --bootstrap-server localhost:9092 --topic (topic name)
+
+8.)code for the producer
+kafka-console-producer.bat --broker-list localhost:9092 --topic (topic name)
+>{where you enter information for the records}
+---------------------------------------------------------------------------------------------------------
